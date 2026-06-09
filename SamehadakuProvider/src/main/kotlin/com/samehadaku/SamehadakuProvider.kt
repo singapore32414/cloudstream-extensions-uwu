@@ -163,11 +163,14 @@ class SamehadakuProvider : MainAPI() {
             val episodeKey = episodeNum?.toString()
             val metaEp = if (episodeKey != null) animeMetaData?.episodes?.get(episodeKey) else null
 
+            val description = document.select("div.desc p, div.entry-content p").text().trim()
+            val apiDescription = animeMetaData?.description?.replace(Regex("<.*?>"), "")
+            val rawPlot = apiDescription ?: animeMetaData?.episodes?.get("1")?.overview
             val epOverview = metaEp?.overview
-            val finalOverview = if (!epOverview.isNullOrBlank()) {
-                epOverview
+            val finalOverview = if (!rawPlot.isNullOrBlank()) {
+                rawPlot
             } else {
-                "Synopsis not yet available."
+                description
             }
 
             newEpisode(link) { 
